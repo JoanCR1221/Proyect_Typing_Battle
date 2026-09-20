@@ -1,0 +1,37 @@
+<!-- Vista mínima: enseña el estado y permite jugar. La interfaz definitiva (área de escritura, barras de progreso,
+     temporizador, ranking y resultados) reemplaza esta plantilla. -->
+<section class="tb-debug" if.bind="controller">
+  <header>
+    <strong>Typing Battle</strong>
+    <span> · estado: ${controller.phase}</span>
+    <span if.bind="controller.phase === 'countdown'"> · empieza en ${controller.countdownSeconds} s</span>
+    <span if.bind="controller.phase === 'running'"> · quedan ${controller.timeLeftSeconds} s</span>
+    <span if.bind="controller.paused"> · en pausa</span>
+    <span if.bind="controller.reconnecting"> · reconectando...</span>
+  </header>
+
+  <p if.bind="controller.error" role="alert">${controller.error}</p>
+
+  <ul>
+    <li repeat.for="player of controller.players">
+      ${player.displayName}: ${player.progress}% · ${player.wpm} ppm · ${player.accuracy}% de precisión
+      <span if.bind="player.finished"> · terminó</span>
+    </li>
+  </ul>
+
+  <p if.bind="controller.text" class="tb-debug-text">${controller.text}</p>
+
+  <textarea
+    if.bind="controller.phase === 'running'"
+    rows="4"
+    cols="80"
+    aria-label="Escribe aquí el texto"
+    disabled.bind="controller.paused"
+    input.trigger="controller.submitTyped($event.target.value)"></textarea>
+
+  <ol if.bind="controller.phase === 'finished'">
+    <li repeat.for="standing of controller.standings">
+      ${standing.rank}. ${standing.displayName} — ${standing.score} puntos (${standing.wpm} ppm, ${standing.accuracy}%)
+    </li>
+  </ol>
+</section>

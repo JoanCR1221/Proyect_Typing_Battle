@@ -31,7 +31,10 @@ module.exports = (env, argv) => {
       new ModuleFederationPlugin({
         name: 'typingGame',
         filename: 'remoteEntry.js',
-        exposes: {},
+        exposes: {
+          './GameModule': './src/game-module.ts',
+          './GameView': './src/game-view.ts',
+        },
         shared: aureliaShared(),
       }),
       new HtmlWebpackPlugin({ template: './index.html' }),
