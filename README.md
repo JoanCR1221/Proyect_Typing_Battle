@@ -47,7 +47,7 @@ Requisitos: Git y el [SDK de .NET 10](https://dotnet.microsoft.com/download).
 dotnet run --project src/backend/TypingBattle.Api
 ```
 
-La API queda en `http://localhost:5080`. Comprobación de salud en `/health` y, en Development, el documento OpenAPI en `/openapi/v1.json`. La base SQLite se crea sola en `typing-battle.db` (Git la ignora); se cambia con `ConnectionStrings:Typing`. Los orígenes que el navegador puede usar para llamar a la API se configuran en `Cors:AllowedOrigins`.
+La API queda en `http://localhost:5080`. Comprobación de salud en `/health` y, en Development, el documento OpenAPI en `/openapi/v1.json`. La base SQLite se crea sola junto al proyecto (`src/backend/TypingBattle.Api/typing-battle.db`); Git ignora ese archivo y sus auxiliares `-wal` y `-shm`. La ruta se cambia con `ConnectionStrings:Typing`. Los orígenes que el navegador puede usar para llamar a la API se configuran en `Cors:AllowedOrigins`.
 
 Pruebas, las mismas que corre el CI:
 
