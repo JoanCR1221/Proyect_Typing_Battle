@@ -1,9 +1,11 @@
+using TypingBattle.Api.Auth;
 using TypingBattle.Api.Results;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
+builder.Services.AddTypingAuth(builder.Configuration, builder.Environment);
 builder.Services.AddTypingResults(builder.Configuration);
 
 // El microfrontend corre en otro origen (el Shell), así que el navegador exige CORS.
@@ -27,6 +29,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapHealthChecks("/health");
 app.MapResultsEndpoints();
 
