@@ -1,7 +1,10 @@
+using TypingBattle.Api.Results;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
+builder.Services.AddTypingResults(builder.Configuration);
 
 // El microfrontend corre en otro origen (el Shell), así que el navegador exige CORS.
 // Los orígenes permitidos salen de la configuración: Cors:AllowedOrigins.
@@ -16,6 +19,8 @@ builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
 
 var app = builder.Build();
 
+await app.Services.InitializeTypingDatabaseAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -23,6 +28,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.MapHealthChecks("/health");
+app.MapResultsEndpoints();
 
 app.Run();
 
