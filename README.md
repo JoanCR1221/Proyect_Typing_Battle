@@ -6,7 +6,7 @@ Este repositorio implementa los contratos de [`battlehub-contracts`](https://git
 
 **Integrantes:** Joan, Johana, Dalla y Wayner.
 
-> **Estado:** en construcción. El backend está completo (hub de la partida, API REST de resultados, persistencia y autenticación) y el microfrontend ya se integra por Module Federation; falta la interfaz definitiva del juego. Ver [Pendientes](#pendientes).
+> **Estado:** en construcción. El backend (hub de la partida, API REST de resultados, persistencia y autenticación) y el microfrontend (integración por Module Federation e interfaz del juego) están completos. Falta la integración con el Shell real y los pasos de gobernanza de [Pendientes](#pendientes). Ver [Pendientes](#pendientes).
 
 ## Stack
 
@@ -34,7 +34,7 @@ TypingBattle.slnx                          → solución .NET (en la raíz)
   pull_request_template.md                 → checklist de Pull Request
 ```
 
-El CI busca la solución `.sln`/`.slnx` en la **raíz** y `src/frontend/package.json`; mientras alguno no exista, su job se omite con una advertencia (así los PRs del backend y del frontend no se bloquean entre sí).
+El CI compila y prueba el backend desde la solución de la **raíz** y el frontend desde `src/frontend` (job `Backend (.NET 10)` y job `Frontend (Aurelia)`).
 
 ## Cómo correrlo localmente
 
@@ -82,7 +82,7 @@ npm start
 
 `npm start` abre el juego como aplicación independiente en `http://localhost:4004` («modo standalone»), con un contexto falso que hace de Shell. Para jugar hacen falta dos jugadores: abra dos pestañas con la misma partida y distinto usuario, por ejemplo `http://localhost:4004/?match=demo&user=ana` y `http://localhost:4004/?match=demo&user=luis`.
 
-Para comprobar la integración por Module Federation existe un Shell simulado (`npm run start:shell`, en `http://localhost:4010`, con el remote de `npm start` corriendo). Cómo lo carga el Shell real está en [`docs/integracion-shell.md`](docs/integracion-shell.md).
+Para comprobar la integración por Module Federation existe un Shell simulado (`npm run start:shell`, en `http://localhost:4010`, con el remote de `npm start` corriendo). Cómo lo carga el Shell real está en [`docs/integracion-shell.md`](docs/integracion-shell.md) y cómo está armada la interfaz, en [`docs/interfaz.md`](docs/interfaz.md).
 
 Pruebas y verificaciones, las mismas que corre el CI:
 
@@ -128,4 +128,3 @@ Todos los ADRs del proyecto se guardan en `battlehub-contracts/adrs` (se envían
 - [ ] Abrir los Issues de [`docs/contratos-pendientes.md`](docs/contratos-pendientes.md).
 - [ ] Revisar con el equipo los ADRs en borrador (motor de BD, validación del progreso en el servidor, reglas de la partida y convención de Module Federation) y enviarlos a `battlehub-contracts/adrs`.
 - [ ] Probar la integración contra el Shell real cuando el Equipo 3 lo tenga.
-- [ ] Quitar el modo de omisión del CI (`.github/workflows/ci.yml`) cuando existan backend y frontend.
