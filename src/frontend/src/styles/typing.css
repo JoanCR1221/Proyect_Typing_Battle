@@ -566,6 +566,8 @@
 .tb-lane-bar {
   height: 14px;
   overflow: hidden;
+  /* El relleno cambia de ancho hasta 4 veces por segundo: esto aísla el recálculo de layout dentro de la barra */
+  contain: layout paint;
   background: var(--tb-surface-2);
   border: 1px solid var(--tb-line);
   border-radius: 999px;
