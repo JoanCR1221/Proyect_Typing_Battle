@@ -1,4 +1,6 @@
 using TypingBattle.Api.Auth;
+using TypingBattle.Api.Game;
+using TypingBattle.Api.Hubs;
 using TypingBattle.Api.Results;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddHealthChecks();
 builder.Services.AddTypingAuth(builder.Configuration, builder.Environment);
 builder.Services.AddTypingResults(builder.Configuration);
+builder.Services.AddTypingGame(builder.Configuration);
 
 // El microfrontend corre en otro origen (el Shell), así que el navegador exige CORS.
 // Los orígenes permitidos salen de la configuración: Cors:AllowedOrigins.
@@ -34,6 +37,7 @@ app.UseAuthorization();
 
 app.MapHealthChecks("/health");
 app.MapResultsEndpoints();
+app.MapHub<TypingHub>(TypingHub.Path);
 
 app.Run();
 
