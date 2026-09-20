@@ -1,0 +1,50 @@
+# .gitignore del Equipo 4 (Typing Battle)
+# Basado en helpers/gitignore-template.txt de battlehub-contracts,
+# adaptado a .NET 10 (backend) y Node/Aurelia (frontend).
+
+# ===== General / SO =====
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# ===== Variables de entorno / secretos =====
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.Local.json
+*.pfx
+*.pem
+
+# ===== IDEs / Editores =====
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+
+# ===== .NET =====
+bin/
+obj/
+*.dll
+*.pdb
+
+# ===== Node / JavaScript / TypeScript =====
+node_modules/
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ===== Bases de datos locales =====
+*.sqlite
+*.sqlite3
+*.db
+
+# ===== Artefactos de pruebas/CI =====
+TestResults/
+*.trx

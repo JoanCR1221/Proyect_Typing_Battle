@@ -1,0 +1,4 @@
+# Normaliza los finales de línea entre Windows (equipo) y Linux (CI).
+# El repositorio guarda LF; cada sistema usa el suyo al hacer checkout.
+* text=auto
+*.sh text eol=lf
