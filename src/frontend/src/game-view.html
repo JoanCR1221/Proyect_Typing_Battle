@@ -1,37 +1,95 @@
-<!-- Vista mínima: enseña el estado y permite jugar. La interfaz definitiva (área de escritura, barras de progreso,
-     temporizador, ranking y resultados) reemplaza esta plantilla. -->
-<section class="tb-debug" if.bind="controller">
-  <header>
-    <strong>Typing Battle</strong>
-    <span> · estado: ${controller.phase}</span>
-    <span if.bind="controller.phase === 'countdown'"> · empieza en ${controller.countdownSeconds} s</span>
-    <span if.bind="controller.phase === 'running'"> · quedan ${controller.timeLeftSeconds} s</span>
-    <span if.bind="controller.paused"> · en pausa</span>
-    <span if.bind="controller.reconnecting"> · reconectando...</span>
+<div class="tb-app" if.bind="controller">
+  <header class="tb-header">
+    <span class="tb-brand">Typing Battle</span>
+    <span class="tb-match">Partida ${controller.matchId}</span>
+
+    <nav class="tb-nav" aria-label="Secciones del juego">
+      <button type="button" class="tb-nav-btn" aria-current="${inMine ? '' : 'page'}" click.trigger="showGame()">Partida</button>
+      <button type="button" class="tb-nav-btn" aria-current="${inMine ? 'page' : ''}" disabled.bind="!canBrowse" click.trigger="showMine()">Mis resultados</button>
+    </nav>
+
+    <div class="tb-header-end">
+      <span class="tb-flag" if.bind="controller.reconnecting" role="status">Reconectando...</span>
+      <span class="tb-flag" if.bind="controller.paused">En pausa</span>
+      <div class="tb-timer tb-num ${urgent ? 'tb-timer--urgent' : ''}" role="timer" aria-label="Tiempo restante" if.bind="controller.phase === 'running'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+        ${clock}
+      </div>
+    </div>
   </header>
 
-  <p if.bind="controller.error" role="alert">${controller.error}</p>
+  <main class="tb-main ${racing ? 'tb-main--race' : inMine ? 'tb-main--wide' : 'tb-main--center'}">
+    <!-- Mis resultados: historial y estadísticas -->
+    <tb-results-panel
+      if.bind="inMine"
+      api.bind="controller.resultsApi"
+      user-id.bind="controller.userId"
+      refresh-key.bind="resultsKey"></tb-results-panel>
 
-  <ul>
-    <li repeat.for="player of controller.players">
-      ${player.displayName}: ${player.progress}% · ${player.wpm} ppm · ${player.accuracy}% de precisión
-      <span if.bind="player.finished"> · terminó</span>
-    </li>
-  </ul>
+    <!-- Partida -->
+    <template if.bind="!inMine">
+      <section class="tb-panel" if.bind="controller.phase === 'idle'">
+        <p class="tb-muted">El juego todavía no ha iniciado.</p>
+      </section>
 
-  <p if.bind="controller.text" class="tb-debug-text">${controller.text}</p>
+      <section class="tb-panel" if.bind="controller.phase === 'connecting'" role="status">
+        <p><span class="tb-spinner" aria-hidden="true"></span> Conectando con la partida...</p>
+      </section>
 
-  <textarea
-    if.bind="controller.phase === 'running'"
-    rows="4"
-    cols="80"
-    aria-label="Escribe aquí el texto"
-    disabled.bind="controller.paused"
-    input.trigger="controller.submitTyped($event.target.value)"></textarea>
+      <tb-lobby
+        if.bind="controller.phase === 'lobby'"
+        players.bind="controller.players"
+        min-players.bind="controller.minPlayers"
+        max-players.bind="controller.maxPlayers"
+        me-id.bind="controller.userId"></tb-lobby>
 
-  <ol if.bind="controller.phase === 'finished'">
-    <li repeat.for="standing of controller.standings">
-      ${standing.rank}. ${standing.displayName} — ${standing.score} puntos (${standing.wpm} ppm, ${standing.accuracy}%)
-    </li>
-  </ol>
-</section>
+      <tb-countdown if.bind="controller.phase === 'countdown'" seconds.bind="controller.countdownSeconds"></tb-countdown>
+
+      <section aria-label="Carrera" if.bind="controller.phase === 'running'">
+        <tb-typing-area
+          text.bind="controller.text"
+          typed.bind="controller.typed"
+          disabled.bind="controller.paused"
+          on-typed.bind="typedHandler"></tb-typing-area>
+
+        <div class="tb-live tb-num" aria-label="Tus números en vivo">
+          <div class="tb-live-item"><span class="tb-live-value">${myWpm}</span><span class="tb-muted">palabras por minuto</span></div>
+          <div class="tb-live-item"><span class="tb-live-value">${myAccuracy}</span><span class="tb-muted">de precisión</span></div>
+          <div class="tb-live-item"><span class="tb-live-value">${myProgress}</span><span class="tb-muted">del texto</span></div>
+        </div>
+
+        <div class="tb-pause" if.bind="controller.paused" role="status">
+          <span>Pausaste tu entrada. La carrera sigue para los demás.</span>
+          <button type="button" class="tb-btn tb-btn--quiet" click.trigger="resume()">Continuar</button>
+        </div>
+      </section>
+
+      <tb-results
+        if.bind="controller.phase === 'finished'"
+        standings.bind="controller.standings"
+        winner-user-id.bind="controller.winnerUserId"
+        me-id.bind="controller.userId"
+        result-saved.bind="controller.resultSaved"></tb-results>
+
+      <section class="tb-panel" if.bind="controller.phase === 'error'">
+        <div class="tb-alert" role="alert">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 16.5v.5" /></svg>
+          <div class="tb-alert-body">
+            <p>${controller.error}</p>
+            <button type="button" class="tb-btn" click.trigger="retry()">Reintentar</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tb-panel" if.bind="controller.phase === 'closed'">
+        <p class="tb-muted">La partida se cerró.</p>
+      </section>
+
+      <!-- Carriles: quién va dónde, en vivo -->
+      <tb-race-lanes
+        if.bind="racing"
+        players.bind="controller.players"
+        me-id.bind="controller.userId"></tb-race-lanes>
+    </template>
+  </main>
+</div>
