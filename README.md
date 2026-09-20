@@ -6,7 +6,7 @@ Este repositorio implementa los contratos de [`battlehub-contracts`](https://git
 
 **Integrantes:** Joan, Johana, Dalla y Wayner.
 
-> **Estado:** en construcción. El backend está completo (hub de la partida, API REST de resultados, persistencia y autenticación); falta el frontend. Ver [Pendientes](#pendientes).
+> **Estado:** en construcción. El backend está completo (hub de la partida, API REST de resultados, persistencia y autenticación) y el microfrontend ya se integra por Module Federation; falta la interfaz definitiva del juego. Ver [Pendientes](#pendientes).
 
 ## Stack
 
@@ -23,12 +23,11 @@ Este repositorio implementa los contratos de [`battlehub-contracts`](https://git
 ```text
 TypingBattle.slnx                          → solución .NET (en la raíz)
 /src
-  /frontend                                → microfrontend Aurelia (aquí va su package.json)
+  /frontend                                → microfrontend Aurelia 2 (package.json, Webpack y sus pruebas en /test)
   /backend/TypingBattle.Api                → API .NET 10: hub /hubs/typing, resultados REST, persistencia y autenticación
 /tests
   /backend/TypingBattle.UnitTests          → pruebas unitarias (Category=Unit)
   /backend/TypingBattle.IntegrationTests   → pruebas de integración contra SQLite real (Category=Integration)
-  /frontend                                → pruebas del microfrontend (si no viven dentro de src/frontend)
 /docs                                      → API, ADRs en borrador y notas del equipo
 /.github
   /workflows/ci.yml                        → pipeline de CI (backend y frontend)
@@ -71,7 +70,35 @@ Referencias: el hub de la partida, con todos sus mensajes, en [`docs/hub-typing.
 
 ### Frontend
 
-Pendiente de completar cuando exista el proyecto Aurelia.
+Requisitos: [Node.js 24 LTS](https://nodejs.org/) (22.12 o superior) y la API corriendo (ver arriba). Desde `src/frontend`:
+
+```bash
+npm ci
+```
+
+```bash
+npm start
+```
+
+`npm start` abre el juego como aplicación independiente en `http://localhost:4004` («modo standalone»), con un contexto falso que hace de Shell. Para jugar hacen falta dos jugadores: abra dos pestañas con la misma partida y distinto usuario, por ejemplo `http://localhost:4004/?match=demo&user=ana` y `http://localhost:4004/?match=demo&user=luis`.
+
+Para comprobar la integración por Module Federation existe un Shell simulado (`npm run start:shell`, en `http://localhost:4010`, con el remote de `npm start` corriendo). Cómo lo carga el Shell real está en [`docs/integracion-shell.md`](docs/integracion-shell.md).
+
+Pruebas y verificaciones, las mismas que corre el CI:
+
+```bash
+npm run lint
+```
+
+```bash
+npm test
+```
+
+```bash
+npm run build
+```
+
+`npm run lint` revisa los tipos de TypeScript. La URL de la API se cambia al compilar con la variable `TYPING_API_URL`.
 
 ## Flujo de trabajo
 
@@ -96,9 +123,9 @@ Todos los ADRs del proyecto se guardan en `battlehub-contracts/adrs` (se envían
 ## Pendientes
 
 - [ ] Proteger `main` y agregar al Tech Lead como colaborador.
-- [ ] Crear el proyecto Aurelia en `src/frontend` y validar Module Federation con un spike.
+- [x] Crear el proyecto Aurelia en `src/frontend` y validar Module Federation con un spike (Shell simulado).
 - [x] Crear la solución .NET 10 y sus proyectos en `src/backend` y `tests/backend`.
 - [ ] Abrir los Issues de [`docs/contratos-pendientes.md`](docs/contratos-pendientes.md).
-- [ ] Revisar con el equipo los ADRs en borrador (motor de BD, validación del progreso en el servidor y reglas de la partida) y enviarlos a `battlehub-contracts/adrs`.
-- [ ] Completar «Cómo correrlo localmente» para el frontend.
+- [ ] Revisar con el equipo los ADRs en borrador (motor de BD, validación del progreso en el servidor, reglas de la partida y convención de Module Federation) y enviarlos a `battlehub-contracts/adrs`.
+- [ ] Probar la integración contra el Shell real cuando el Equipo 3 lo tenga.
 - [ ] Quitar el modo de omisión del CI (`.github/workflows/ci.yml`) cuando existan backend y frontend.

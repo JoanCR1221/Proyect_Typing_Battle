@@ -5,7 +5,7 @@ Regla del proyecto: las dudas de contrato se resuelven abriendo un Issue en [`ba
 | # | Tema | Afecta a | Issue | Estado |
 |---|---|---|---|---|
 | 1 | Cómo notifica el juego el fin de partida a Matchmaking | Equipos 2, 4, 5 y 6 | — | Por abrir (con suposición implementada) |
-| 2 | Convención de Module Federation entre el Shell y los juegos | Equipos 3, 4, 5 y 6 | — | Por abrir |
+| 2 | Convención de Module Federation entre el Shell y los juegos | Equipos 3, 4, 5 y 6 | — | Por abrir (con suposición implementada) |
 | 3 | Autenticación y autorización en la API y el hub de cada juego | Equipos 1, 3, 4, 5 y 6 | — | Por abrir (con suposición implementada) |
 | 4 | Artefactos prometidos y detalles de gobernanza | Tech Lead | — | Por abrir |
 
@@ -86,3 +86,4 @@ Mientras el Tech Lead responde, el código de Typing Battle asume lo siguiente. 
 |---|---|---|
 | 1. Fin de partida | Al terminar, el backend guarda el resultado y hace `POST {Matchmaking:BaseUrl}/api/matches/{matchId}/finish` con `{ matchId, gameType, winnerUserId, finishedAt }`. Si `Matchmaking:BaseUrl` está vacía, solo deja constancia en el log. | `Matchmaking/MatchmakingNotifier.cs`; la ruta se cambia en `Matchmaking:FinishPath` |
 | 3. Autenticación | Se validan JWT de Auth0 con `Auth:Domain` y `Auth:Audience`, y el id del jugador es el claim `sub`. En el hub el token viaja en `?access_token=`. El permiso `games.typing.play` **todavía no se exige**. Para trabajar sin Auth0 existe `Auth:Mode=Development` (solo en Development y Testing). | `src/backend/TypingBattle.Api/Auth/` |
+| 2. Module Federation | Remote `typingGame`, archivo `remoteEntry.js`, módulos expuestos `./GameModule` (clase que implementa `GameModule`) y `./GameView` (elemento `<typing-game>`, que el Shell dibuja con `au-compose`), y todos los `@aurelia/*` compartidos como singleton. Extensiones opcionales al contexto: `getAccessToken` y `apiBaseUrl`. Probado con un Shell simulado. | `src/frontend/webpack.config.js`, [`integracion-shell.md`](integracion-shell.md) |

@@ -34,6 +34,7 @@ obj/
 # ===== Node / JavaScript / TypeScript =====
 node_modules/
 dist/
+dist-host-mock/
 build/
 coverage/
 npm-debug.log*
