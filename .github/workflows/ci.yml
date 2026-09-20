@@ -3,11 +3,6 @@
 # (y en cada push a main) se ejecutan restore/install, build, lint, pruebas unitarias y
 # pruebas de integración del backend (.NET 10) y del frontend (Aurelia).
 #
-# Mientras no exista el proyecto de un componente, su job termina en verde con una
-# advertencia y omite los pasos. Así un PR del backend no queda bloqueado por el
-# frontend (y viceversa). Cuando existan ambos proyectos, quitar los pasos "Detectar ..."
-# y los "if: steps.detect.outputs.found == 'true'" para que un CI vacío nunca pase en verde.
-#
 # No agregar filtros "paths:" a los triggers: si un check obligatorio no se ejecuta,
 # el PR queda esperándolo indefinidamente.
 
@@ -29,36 +24,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detectar solución .NET
-        id: detect
-        run: |
-          if compgen -G "*.sln" > /dev/null || compgen -G "*.slnx" > /dev/null; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "::warning title=Backend omitido::No hay .sln/.slnx en la raíz del repo; se omiten build y pruebas del backend."
-          fi
-
       - name: Setup .NET 10
-        if: steps.detect.outputs.found == 'true'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
 
       - name: Restore
-        if: steps.detect.outputs.found == 'true'
         run: dotnet restore
 
       - name: Build
-        if: steps.detect.outputs.found == 'true'
         run: dotnet build --no-restore
 
       - name: Unit tests
-        if: steps.detect.outputs.found == 'true'
         run: dotnet test --no-build --filter "Category=Unit"
 
       - name: Integration tests
-        if: steps.detect.outputs.found == 'true'
         run: dotnet test --no-build --filter "Category=Integration"
 
   frontend:
@@ -70,34 +50,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Detectar proyecto Aurelia
-        id: detect
-        run: |
-          if [ -f package.json ]; then
-            echo "found=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "found=false" >> "$GITHUB_OUTPUT"
-            echo "::warning title=Frontend omitido::No hay package.json en src/frontend; se omiten build y pruebas del frontend."
-          fi
-
       - name: Setup Node
-        if: steps.detect.outputs.found == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "24"
 
       - name: Install
-        if: steps.detect.outputs.found == 'true'
         run: npm ci
 
-      - name: Lint
-        if: steps.detect.outputs.found == 'true'
-        run: npm run lint --if-present
+      - name: Lint (tipos de TypeScript)
+        run: npm run lint
 
       - name: Build
-        if: steps.detect.outputs.found == 'true'
         run: npm run build
 
       - name: Unit tests
-        if: steps.detect.outputs.found == 'true'
         run: npm test
