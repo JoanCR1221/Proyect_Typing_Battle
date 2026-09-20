@@ -1,0 +1,23 @@
+<div class="tb-typing ${disabled ? 'tb-typing--disabled' : ''}">
+  <p class="tb-text" id="tb-text" lang="es"><span repeat.for="c of chars" class="tb-ch tb-ch--${c.state}">${c.char}</span></p>
+
+  <textarea
+    ref="input"
+    class="tb-typing-input"
+    rows="1"
+    maxlength="${text.length}"
+    spellcheck="false"
+    autocomplete="off"
+    autocapitalize="off"
+    aria-label="Escribe aquí el texto de la carrera"
+    aria-describedby="tb-text"
+    disabled.bind="disabled"
+    input.trigger="changed()"
+    keydown.trigger="keydown($event)"
+    paste.trigger="block($event)"
+    drop.trigger="block($event)"
+    focus.trigger="focused = true"
+    blur.trigger="focused = false"></textarea>
+
+  <p class="tb-typing-hint" if.bind="!focused && !disabled" aria-hidden="true">Haz clic para seguir escribiendo</p>
+</div>
