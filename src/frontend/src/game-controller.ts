@@ -82,6 +82,21 @@ export class GameController {
     this.tickMs = tickMs;
   }
 
+  /** Id de la partida (el `matchId` que entregó el Shell). */
+  get matchId(): string {
+    return this.context.matchId;
+  }
+
+  /** Id del jugador local: con él se consulta su historial y sus estadísticas. */
+  get userId(): string {
+    return this.context.currentUser.id;
+  }
+
+  /** Cliente de la API de resultados, para que la interfaz muestre el historial y las estadísticas. */
+  get resultsApi(): ResultsApi {
+    return this.api;
+  }
+
   /** El jugador local dentro de la lista de jugadores (undefined hasta que el servidor lo informe). */
   get me(): PlayerState | undefined {
     return this.players.find((player) => player.userId === this.context.currentUser.id);

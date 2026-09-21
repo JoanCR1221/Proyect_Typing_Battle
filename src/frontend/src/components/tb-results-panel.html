@@ -1,0 +1,58 @@
+<section aria-label="Mis resultados" aria-busy="${state === 'loading'}">
+  <div class="tb-panel" if.bind="state === 'loading'">
+    <p role="status"><span class="tb-spinner" aria-hidden="true"></span> Cargando tus resultados...</p>
+  </div>
+
+  <div class="tb-panel" if.bind="state === 'error'">
+    <div class="tb-alert" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 16.5v.5" /></svg>
+      <div class="tb-alert-body">
+        <p>${error}</p>
+        <button type="button" class="tb-btn" click.trigger="retry()">Reintentar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tb-panel" if.bind="state === 'ready' && gamesPlayed === 0">
+    <p class="tb-empty">Todavía no has jugado ninguna partida. Cuando termines una, aparecerá aquí.</p>
+  </div>
+
+  <div class="tb-results-grid" if.bind="state === 'ready' && gamesPlayed > 0">
+    <div class="tb-panel">
+      <h2 class="tb-panel-title">Historial</h2>
+      <div class="tb-table-wrap" style="margin-top: 0">
+        <table class="tb-table tb-num">
+          <caption class="tb-sr">Tus últimas partidas, de la más reciente a la más antigua</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="tb-left">Fecha</th>
+              <th scope="col">Resultado</th>
+              <th scope="col">Puntos</th>
+              <th scope="col">Velocidad</th>
+              <th scope="col">Precisión</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr repeat.for="row of history">
+              <td class="tb-left">${row.date}</td>
+              <td><span class="tb-win" if.bind="row.won">${row.outcome}</span><span if.bind="!row.won">${row.outcome}</span></td>
+              <td>${row.score}</td>
+              <td>${row.speed}</td>
+              <td>${row.accuracy}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tb-panel">
+      <h2 class="tb-panel-title">Estadísticas</h2>
+      <dl class="tb-stat-list tb-num">
+        <div repeat.for="line of stats">
+          <dt>${line.label}</dt>
+          <dd>${line.value}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>

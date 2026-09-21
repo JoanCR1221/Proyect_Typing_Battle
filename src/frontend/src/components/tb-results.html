@@ -1,0 +1,42 @@
+<section class="tb-panel" aria-label="Resultado de la carrera">
+  <h2 class="tb-headline">${headline}</h2>
+  <p class="tb-muted">${detail}</p>
+
+  <div class="tb-table-wrap" if.bind="rows.length > 0">
+    <table class="tb-table tb-num">
+      <caption class="tb-sr">Clasificación final</caption>
+      <thead>
+        <tr>
+          <th scope="col">Puesto</th>
+          <th scope="col" class="tb-left">Jugador</th>
+          <th scope="col">Velocidad</th>
+          <th scope="col">Precisión</th>
+          <th scope="col">Avance</th>
+          <th scope="col">Puntos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr repeat.for="row of rows" class="${row.isMe ? 'tb-row--me' : ''}">
+          <td>${row.position}</td>
+          <td class="tb-left">
+            <span class="tb-win" if.bind="row.isWinner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3" /></svg>
+              ${row.name}
+            </span>
+            <span if.bind="!row.isWinner">${row.name}</span>
+            <span class="tb-badge" if.bind="row.isMe">Tú</span>
+          </td>
+          <td>${row.speed} ppm</td>
+          <td>${row.accuracy}</td>
+          <td>${row.progress}</td>
+          <td>${row.score}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tb-alert" role="status" if.bind="!resultSaved && rows.length > 0" style="margin-top: 20px">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v6M12 16.5v.5" /></svg>
+    <p>No se pudo guardar este resultado, así que no aparecerá en tu historial.</p>
+  </div>
+</section>

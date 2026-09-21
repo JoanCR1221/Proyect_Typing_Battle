@@ -1,0 +1,26 @@
+<section class="tb-panel" aria-label="Jugadores y ranking en vivo">
+  <h3 class="tb-panel-title">Jugadores</h3>
+
+  <ul class="tb-lanes">
+    <li repeat.for="lane of lanes" class="tb-lane tb-lane--c${lane.colorIndex} ${lane.isMe ? 'tb-lane--me' : ''} ${lane.connected ? '' : 'tb-lane--offline'}">
+      <div class="tb-lane-head tb-num">
+        <span class="tb-lane-pos">${lane.position}</span>
+        <span class="tb-lane-name">${lane.name}</span>
+        <span class="tb-badge" if.bind="lane.isMe">Tú</span>
+        <span class="tb-badge tb-badge--off" if.bind="!lane.connected">Sin conexión</span>
+        <span class="tb-lane-speed">${lane.speed} ppm</span>
+      </div>
+
+      <div class="tb-lane-bar" role="progressbar" aria-label="Avance de ${lane.name}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${lane.progress}">
+        <div class="tb-lane-fill" style="width: ${lane.progress}%"></div>
+      </div>
+
+      <div class="tb-lane-foot tb-num">
+        <svg if.bind="lane.finished" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
+        <span if.bind="lane.finished">Terminó</span>
+        <span if.bind="!lane.finished">${lane.progressText}</span>
+        <span>· precisión ${lane.accuracy}</span>
+      </div>
+    </li>
+  </ul>
+</section>

@@ -1,0 +1,19 @@
+<section class="tb-panel" aria-label="Sala de espera">
+  <h2>Sala de espera</h2>
+
+  <p class="tb-muted" if.bind="missing > 0">
+    Falta${missing === 1 ? '' : 'n'} ${missing} jugador${missing === 1 ? '' : 'es'} para poder empezar (mínimo ${minPlayers}).
+  </p>
+  <p class="tb-muted" if.bind="missing === 0">Ya son suficientes. La carrera empieza cuando todos estén listos.</p>
+
+  <ul class="tb-lobby-list">
+    <li repeat.for="player of players" class="tb-lobby-item">
+      <span class="tb-dot ${player.ready ? 'tb-dot--ready' : ''}" aria-hidden="true"></span>
+      <span>${player.displayName}</span>
+      <span class="tb-badge" if.bind="player.userId === meId">Tú</span>
+      <span class="tb-lobby-status tb-muted">${player.ready ? 'Listo' : 'Conectándose...'}</span>
+    </li>
+  </ul>
+
+  <p class="tb-lobby-slots tb-muted tb-num">${players.length} de ${maxPlayers} lugares ocupados.</p>
+</section>
