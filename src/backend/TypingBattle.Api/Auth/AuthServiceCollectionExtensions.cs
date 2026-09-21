@@ -74,7 +74,15 @@ public static class AuthServiceCollectionExtensions
                 $"Auth:Mode '{options.Mode}' no es válido. Use '{AuthOptions.Auth0Mode}' o '{AuthOptions.DevelopmentMode}'.");
         }
 
-        services.AddAuthorization();
+        services.AddAuthorization(authorization => authorization.AddPolicy(TypingPolicies.Play, policy =>
+        {
+            policy.RequireAuthenticatedUser();
+            if (!string.IsNullOrWhiteSpace(options.RequiredPermission))
+            {
+                var permission = options.RequiredPermission.Trim();
+                policy.RequireAssertion(context => PermissionCheck.HasPermission(context.User, permission));
+            }
+        }));
         return services;
     }
 
