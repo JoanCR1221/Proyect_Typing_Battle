@@ -6,6 +6,7 @@ Hub SignalR propio del juego, independiente del Lobby Hub de Matchmaking (`03-co
 
 - URL: `http://localhost:5080/hubs/typing` en local.
 - Autenticación (ver el README): un JWT de Auth0 en `accessTokenFactory`; en desarrollo local, sin Auth0, los parámetros `?dev_user=ana&dev_name=Ana` en la URL.
+- Si el servidor exige un permiso (`Auth:RequiredPermission`, por ejemplo `games.typing.play`), un token sin él recibe `403` al conectar.
 - El id del jugador es el claim `sub` del token. Debe coincidir con `currentUser.id` del contexto del juego, porque es el `userId` con el que luego se consulta el historial.
 - Todos los nombres del JSON van en `camelCase`, las fechas en UTC con sufijo `Z` y los estados como texto (`"running"`).
 
