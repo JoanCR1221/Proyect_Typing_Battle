@@ -12,7 +12,7 @@ public static class ResultsEndpoints
 
     public static IEndpointRouteBuilder MapResultsEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup(BasePath).WithTags("Typing Battle · resultados");
+        var group = app.MapGroup(BasePath).WithTags("Typing Battle · resultados").RequireAuthorization();
 
         group.MapPost("/results", SaveResult)
             .WithName("SaveTypingResult")

@@ -16,7 +16,7 @@ Reglas comunes:
 - Los ids de jugador pueden traer caracteres especiales (los de Auth0 son `auth0|64f0c1...`): en la URL hay que codificarlos (`encodeURIComponent`).
 - Errores de validación: `400` con formato `application/problem+json` y el detalle en `errors`, por campo.
 
-> Autenticación: pendiente (ver la duda 3 de [`contratos-pendientes.md`](contratos-pendientes.md)).
+> Autenticación: todos los endpoints exigen un usuario autenticado (`401` si no hay). Con Auth0, un JWT en `Authorization: Bearer`; en desarrollo local, el encabezado `X-Dev-User`. El detalle está en el README, y cómo se autentica cada juego sigue como duda 3 de [`contratos-pendientes.md`](contratos-pendientes.md).
 
 ## POST /results
 
