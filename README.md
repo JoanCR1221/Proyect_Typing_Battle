@@ -6,7 +6,7 @@ Este repositorio implementa los contratos de [`battlehub-contracts`](https://git
 
 **Integrantes:** Joan, Johana, Dalla y Wayner.
 
-> **Estado:** en construcción. Todavía no hay código de aplicación; ver [Pendientes](#pendientes).
+> **Estado:** en construcción. La API REST de resultados y su persistencia están listas; ver [Pendientes](#pendientes).
 
 ## Stack
 
@@ -14,32 +14,56 @@ Este repositorio implementa los contratos de [`battlehub-contracts`](https://git
 |---|---|
 | Microfrontend | Aurelia 2, cargado por el Shell con Module Federation (Webpack 5) |
 | Backend | .NET 10: API REST + hub SignalR en `/hubs/typing` |
-| Base de datos | Por definir (ADR pendiente, ver [`docs/`](docs/)) |
+| Base de datos | SQLite con Entity Framework Core ([ADR](docs/adr-borradores/ADR-NNN-motor-de-base-de-datos.md)) |
 | Autenticación | Auth0 (SSO, tenant compartido del proyecto) |
 | CI | GitHub Actions |
 
 ## Estructura
 
 ```text
+TypingBattle.slnx                          → solución .NET (en la raíz)
 /src
-  /frontend        → microfrontend Aurelia (aquí va su package.json)
-  /backend         → API .NET 10: hub, REST y persistencia
+  /frontend                                → microfrontend Aurelia (aquí va su package.json)
+  /backend/TypingBattle.Api                → API .NET 10: resultados REST y persistencia
 /tests
-  /backend         → pruebas unitarias y de integración (.NET)
-  /frontend        → pruebas del microfrontend (si no viven dentro de src/frontend)
-/docs              → borradores y notas del equipo
+  /backend/TypingBattle.UnitTests          → pruebas unitarias (Category=Unit)
+  /backend/TypingBattle.IntegrationTests   → pruebas de integración contra SQLite real (Category=Integration)
+  /frontend                                → pruebas del microfrontend (si no viven dentro de src/frontend)
+/docs                                      → API, ADRs en borrador y notas del equipo
 /.github
-  /workflows/ci.yml            → pipeline de CI (backend y frontend)
-  pull_request_template.md     → checklist de Pull Request
+  /workflows/ci.yml                        → pipeline de CI (backend y frontend)
+  pull_request_template.md                 → checklist de Pull Request
 ```
 
-La solución .NET (`.sln` o `.slnx`) va en la **raíz** del repo y referencia los proyectos de `src/backend` y `tests/backend`. El CI busca esa solución y `src/frontend/package.json`; mientras no existan, cada job se omite con una advertencia (así los PRs del backend y del frontend no se bloquean entre sí).
+El CI busca la solución `.sln`/`.slnx` en la **raíz** y `src/frontend/package.json`; mientras alguno no exista, su job se omite con una advertencia (así los PRs del backend y del frontend no se bloquean entre sí).
 
 ## Cómo correrlo localmente
 
-Pendiente: el contrato exige que esta sección explique la ejecución local; se completa cuando existan el backend y el frontend.
+### Backend
 
-Requisitos previstos: Git, .NET 10 SDK, Node.js LTS y, si las pruebas de integración usan contenedores, Docker.
+Requisitos: Git y el [SDK de .NET 10](https://dotnet.microsoft.com/download).
+
+```bash
+dotnet run --project src/backend/TypingBattle.Api
+```
+
+La API queda en `http://localhost:5080`. Comprobación de salud en `/health` y, en Development, el documento OpenAPI en `/openapi/v1.json`. La base SQLite se crea sola junto al proyecto (`src/backend/TypingBattle.Api/typing-battle.db`); Git ignora ese archivo y sus auxiliares `-wal` y `-shm`. La ruta se cambia con `ConnectionStrings:Typing`. Los orígenes que el navegador puede usar para llamar a la API se configuran en `Cors:AllowedOrigins`.
+
+Pruebas, las mismas que corre el CI:
+
+```bash
+dotnet test --filter "Category=Unit"
+```
+
+```bash
+dotnet test --filter "Category=Integration"
+```
+
+Referencia de la API: [`docs/api-resultados.md`](docs/api-resultados.md).
+
+### Frontend
+
+Pendiente de completar cuando exista el proyecto Aurelia.
 
 ## Flujo de trabajo
 
@@ -59,14 +83,14 @@ Requisitos previstos: Git, .NET 10 SDK, Node.js LTS y, si las pruebas de integra
 
 ## ADRs
 
-Todos los ADRs del proyecto se guardan en `battlehub-contracts/adrs` (se envían por Pull Request), no en este repositorio. Los borradores del equipo viven en [`docs/`](docs/).
+Todos los ADRs del proyecto se guardan en `battlehub-contracts/adrs` (se envían por Pull Request), no en este repositorio. Los borradores del equipo viven en [`docs/adr-borradores/`](docs/adr-borradores/).
 
 ## Pendientes
 
 - [ ] Proteger `main` y agregar al Tech Lead como colaborador.
 - [ ] Crear el proyecto Aurelia en `src/frontend` y validar Module Federation con un spike.
-- [ ] Crear la solución .NET 10 y sus proyectos en `src/backend` y `tests/backend`.
+- [x] Crear la solución .NET 10 y sus proyectos en `src/backend` y `tests/backend`.
 - [ ] Abrir los Issues de [`docs/contratos-pendientes.md`](docs/contratos-pendientes.md).
-- [ ] Elegir el motor de BD y enviar el ADR (borrador en [`docs/adr-borradores/`](docs/adr-borradores/)).
-- [ ] Completar «Cómo correrlo localmente».
+- [ ] Revisar el ADR del motor de BD (SQLite) con el equipo y enviarlo a `battlehub-contracts/adrs`.
+- [ ] Completar «Cómo correrlo localmente» para el frontend.
 - [ ] Quitar el modo de omisión del CI (`.github/workflows/ci.yml`) cuando existan backend y frontend.
