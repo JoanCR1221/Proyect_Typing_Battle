@@ -1,0 +1,35 @@
+<div class="tb-dev">
+  <header class="tb-dev-bar">
+    <strong>Typing Battle · modo standalone</strong>
+    <span>Simula al Shell: contexto falso, ciclo de vida a mano.</span>
+    <span class="tb-dev-status">Módulo: <strong>${status}</strong></span>
+    <button type="button" click.trigger="initialize()">initialize</button>
+    <button type="button" click.trigger="start()">start</button>
+    <button type="button" click.trigger="pause()">pause</button>
+    <button type="button" click.trigger="dispose()">dispose</button>
+    <span class="tb-dev-error" if.bind="lastError" role="alert">${lastError}</span>
+  </header>
+
+  <details class="tb-dev-context">
+    <summary>GameContext que recibe el juego</summary>
+    <pre>${contextJson}</pre>
+    <p>Otro jugador: <a href="?match=${params.matchId}&user=luis">luis</a> ·
+      <a href="?match=${params.matchId}&user=maria">maria</a> (en otra pestaña, misma partida).</p>
+  </details>
+
+  <!-- El Shell es dueño del layout: el juego solo dibuja dentro de esta área (ancho 1024–1440 px, alto mínimo 700 px). -->
+  <main class="tb-shell-area">
+    <typing-game module.bind="gameModule"></typing-game>
+  </main>
+</div>
+
+<style>
+  .tb-dev-bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 8px 16px; background: #1c2333; color: #fff; }
+  .tb-dev-bar span { opacity: 0.8; font-size: 14px; }
+  .tb-dev-bar .tb-dev-status { opacity: 1; }
+  .tb-dev-bar button { font: inherit; padding: 2px 10px; cursor: pointer; }
+  .tb-dev-error { color: #ffb4b4; opacity: 1 !important; }
+  .tb-dev-context { padding: 4px 16px; font-size: 14px; background: #f7f8fb; }
+  .tb-dev-context pre { margin: 4px 0; }
+  .tb-shell-area { box-sizing: border-box; width: 100%; max-width: 1440px; min-width: 1024px; min-height: 700px; margin: 0 auto; background: #fff; outline: 1px dashed #9aa4bd; }
+</style>

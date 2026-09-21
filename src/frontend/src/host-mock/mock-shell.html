@@ -1,0 +1,14 @@
+<div style="padding: 12px 16px;">
+  <h1 style="margin: 0 0 4px; font-size: 20px;">Shell simulado (Module Federation)</h1>
+  <p style="margin: 0 0 8px;">
+    Carga el remote <code>typingGame</code> de <code>http://localhost:4004</code>. Estado: <strong>${status}</strong>
+    <button type="button" click.trigger="start()">start</button>
+    <button type="button" click.trigger="pause()">pause</button>
+    <button type="button" click.trigger="dispose()">dispose</button>
+  </p>
+  <p if.bind="lastError" role="alert" style="color: #b00020;">${lastError}</p>
+
+  <div style="box-sizing: border-box; width: 100%; max-width: 1440px; min-width: 1024px; min-height: 700px; background: #fff; outline: 1px dashed #7d88a6;">
+    <au-compose if.bind="gameView" component.bind="gameView" module.bind="gameModule"></au-compose>
+  </div>
+</div>
