@@ -11,8 +11,9 @@ namespace TypingBattle.Api.Auth;
 /// <see cref="AuthServiceCollectionExtensions.AddTypingAuth"/> se niega a registrarla fuera de Development y Testing.
 /// </summary>
 /// <remarks>
-/// Identidad por encabezado (<c>X-Dev-User</c>, <c>X-Dev-Name</c>) o, para el hub (un WebSocket no puede mandar
-/// encabezados desde el navegador), por parámetros de la URL (<c>dev_user</c>, <c>dev_name</c>).
+/// Identidad por encabezado (<c>X-Dev-User</c>, <c>X-Dev-Name</c>, <c>X-Dev-Permissions</c>) o, para el hub (un
+/// WebSocket no puede mandar encabezados desde el navegador), por parámetros de la URL (<c>dev_user</c>, <c>dev_name</c>,
+/// <c>dev_permissions</c>).
 /// </remarks>
 public sealed class DevelopmentAuthHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
@@ -31,8 +32,17 @@ public sealed class DevelopmentAuthHandler(
 
         userId = userId.Trim();
         var name = Request.Headers["X-Dev-Name"].FirstOrDefault() ?? Request.Query["dev_name"].FirstOrDefault();
+        var claims = new List<Claim> { new("sub", userId), new("name", string.IsNullOrWhiteSpace(name) ? userId : name.Trim()) };
+
+        // Permisos simulados para probar Auth:RequiredPermission sin Auth0: «games.typing.play» (varios separados por coma).
+        var permissions = Request.Headers["X-Dev-Permissions"].FirstOrDefault() ?? Request.Query["dev_permissions"].FirstOrDefault();
+        foreach (var permission in (permissions ?? "").Split([',', ' '], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            claims.Add(new Claim("permissions", permission));
+        }
+
         var identity = new ClaimsIdentity(
-            [new Claim("sub", userId), new Claim("name", string.IsNullOrWhiteSpace(name) ? userId : name.Trim())],
+            claims,
             SchemeName,
             nameType: "name",
             roleType: "role");

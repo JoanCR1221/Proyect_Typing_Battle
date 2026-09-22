@@ -49,12 +49,16 @@ internal sealed class HubPlayer : IAsyncDisposable
 {
     /// <param name="devUser">Usuario de desarrollo (parámetro dev_user de la URL). Solo funciona con Auth:Mode=Development.</param>
     /// <param name="token">JWT de acceso. Va en el encabezado Authorization o, con <paramref name="tokenInQuery"/>, en la URL.</param>
-    public HubPlayer(WebApplicationFactory<Program> factory, string? devUser = null, string? token = null, bool tokenInQuery = false)
+    public HubPlayer(WebApplicationFactory<Program> factory, string? devUser = null, string? token = null, bool tokenInQuery = false, string? devPermissions = null)
     {
         var query = new List<string>();
         if (devUser is not null)
         {
             query.Add($"dev_user={Uri.EscapeDataString(devUser)}&dev_name={Uri.EscapeDataString(devUser)}");
+            if (devPermissions is not null)
+            {
+                query.Add($"dev_permissions={Uri.EscapeDataString(devPermissions)}");
+            }
         }
 
         if (token is not null && tokenInQuery)

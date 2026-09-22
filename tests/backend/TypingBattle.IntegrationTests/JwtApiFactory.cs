@@ -65,13 +65,22 @@ public sealed class JwtApiFactory : WebApplicationFactory<Program>
         string? name = null,
         string audience = Audience,
         DateTime? expires = null,
-        SecurityKey? key = null)
+        SecurityKey? key = null,
+        IEnumerable<string>? permissions = null,
+        string? scope = null)
     {
         var expiry = expires ?? DateTime.UtcNow.AddMinutes(5);
         var claims = new List<Claim> { new("sub", userId) };
         if (name is not null)
         {
             claims.Add(new Claim("name", name));
+        }
+
+        // Auth0 con RBAC manda «permissions» como una lista; «scope» como texto separado por espacios.
+        claims.AddRange((permissions ?? []).Select(permission => new Claim("permissions", permission)));
+        if (scope is not null)
+        {
+            claims.Add(new Claim("scope", scope));
         }
 
         return new JsonWebTokenHandler().CreateToken(new SecurityTokenDescriptor

@@ -407,6 +407,12 @@ describe('describeError', () => {
     expect(describeError(new Error('Failed to start the connection: TypeError: Failed to fetch'))).toContain('No se pudo conectar');
   });
 
+  it('explica que falta el permiso cuando el servidor responde 403', () => {
+    expect(describeError(new Error("Failed to complete negotiation with the server: Error: Forbidden: Status code '403'"))).toBe(
+      'Tu cuenta no tiene permiso para jugar Typing Battle.',
+    );
+  });
+
   it('deja pasar otros mensajes y nunca devuelve algo vacío', () => {
     expect(describeError(new Error('algo raro'))).toBe('algo raro');
     expect(describeError('texto suelto')).toBe('texto suelto');

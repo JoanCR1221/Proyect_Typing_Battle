@@ -18,4 +18,11 @@ public sealed class AuthOptions
 
     /// <summary>Identificador (audience) de la API de Typing Battle registrada en Auth0.</summary>
     public string Audience { get; set; } = "";
+
+    /// <summary>
+    /// Permiso que debe traer el token para usar la API de resultados y el hub, por ejemplo <c>games.typing.play</c>
+    /// (03-contratos-tecnicos.md lo lista como permiso de ejemplo). Vacío = solo se exige un usuario autenticado.
+    /// Está apagado por defecto porque exige que el tenant de Auth0 emita permisos en el token (RBAC).
+    /// </summary>
+    public string RequiredPermission { get; set; } = "";
 }
